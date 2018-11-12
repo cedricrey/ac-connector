@@ -1,0 +1,11 @@
+{
+  "addNewConnection" : "Ajouter une nouvelle connexion",
+  "name" : "Nom de la connexion",
+  "server" : "URL du serveur",
+  "user" : "Utilisateur",
+  "password" : "Mot de passe",
+  "label" : "Titre",
+  "description" : "Description",
+  "devMode" : "Mode avancé (développeur)",
+  "addField" : "Ajouter un nouveau champs"
+}

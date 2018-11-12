@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+
+    <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
+    Remove this if you use the .htaccess -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+
+    <title>index</title>
+    <meta name="description" content="">
+    <meta name="author" content="Ced">
+
+    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+
+    <!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
+    <link rel="shortcut icon" href="/favicon.ico">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+    <script src="https://cdn.socket.io/socket.io-1.2.0.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
+    <style>
+      @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300);
+      html{
+          padding:0;
+          margin:0;
+      }
+      body {
+        padding: 20px 10px 10px;
+        margin:0;
+        font-family: 'Open Sans', sans-serif;
+        color: #575757;
+        background: url('images/backgroundcnx.png') repeat fixed center center /cover rgba(0, 0, 0, 0);
+
+      }
+      header{
+        padding:1em;
+        background-color:#FFF;
+        width:500px;
+        margin:0 auto;
+        border-radius: 0.5em;
+      }
+      #connectionManager
+      {
+        width:500px;
+        margin:10px auto;
+        padding:1em;
+        border-radius: 0.5em;
+        background-color:#FFF;
+      }
+      #connectionsList {
+        width:200px;
+        margin-left:260px;
+        text-align:right;
+      }
+      #connectionsList li{
+        list-style: none;
+        padding:10px;
+        margin:0;
+        text-decoration: underline;
+        color: #36C;
+        cursor:pointer;
+        transition:1s ease color,1s ease background-color;
+        border-radius: 4.8px;
+      }
+      #connectionsList li:hover{
+        list-style: none;
+        text-decoration: none;
+        color: #FFF;
+        background-color: #36C;
+        cursor:pointer;
+      }
+      #connectionDetails form input[type=text],
+      #connectionDetails form input[type=password]{
+          text-align: left;
+          -webkit-appearance: none;
+          -webkit-font-smoothing: antialiased;
+          box-sizing: border-box;
+          margin-bottom: .6875;
+          -moz-box-sizing: border-box;
+          display: inline-block;
+          width: 100%;
+          height: 34px;
+          -webkit-transition: border-color .3s ease;
+          -moz-transition: border-color .3s ease;
+          -o-transition: border-color .3s ease;
+          -ms-transition: border-color .3s ease;
+          transition: border-color .3s ease;
+          -webkit-border-radius: 4.8px;
+          -moz-border-radius: 4.8px;
+          border-radius: 4.8px;
+          -webkit-border-radius: .3rem;
+          -moz-border-radius: .3rem;
+          border-radius: .3rem;
+          border: 1px solid #d5d5d5;
+          font-size: 16px;
+          font-size: 1rem;
+          padding: 4.8px 12.8px 8px 10.4px;
+          padding: .3rem .8rem .5rem .65rem;
+          line-height: 19.2px;
+          line-height: 1.2rem;
+          background-color: #fff;
+          color: #535353;
+      }
+      #connectionDetails form input[type=text]:focus, #connectionDetails form input[type=password]:focus {
+          outline: 0;
+          border-color: #009df5;
+          border-width: 2px;
+          padding: 3.8px 11.8px 7px 9.4px;
+      }
+      #connectionDetails form label{
+        display:block;
+        margin-top:10px;
+        padding-bottom: 5px;
+        font-size: 16px;
+        color: #A0A0A0;
+      }
+      input[type=submit]{
+        font-size: 16px;
+        padding: 6.4px 7.2px 7.2px 7.2px;
+        -webkit-border-radius: 6.4px;
+        -moz-border-radius: 6.4px;
+        border-radius: 6.4px;
+        -webkit-transition: background-color .5s ease;
+        -moz-transition: background-color .5s ease;
+        -o-transition: background-color .5s ease;
+        -ms-transition: background-color .5s ease;
+        transition: background-color .5s ease;
+        text-transform: uppercase;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        background-color: #009df5;
+        border: 0;
+        box-sizing: border-box;
+        color: #fff;
+        cursor: pointer;
+        display: inline-block;
+        font-family: inherit;
+        font-weight: 500;
+        text-align: center;
+        text-decoration: none;
+        text-shadow: none;
+        vertical-align: middle;
+        width: 100%;
+        height: 34px;
+        margin-top:20px
+      }
+      input[type=submit]:hover, input[type=submit]:focus {
+        background-color: #2a78b8;
+      }
+    </style>
+  </head>
+
+  <body>
+      <div>
+        <header>
+          <div>
+            <img src="/images/logo_ACC.png"/>
+          </div>
+          <h1>Adobe Campaign Connector Manager</h1>
+        </header>
+        <div id="connectionManager">
+          <ul id="connectionsList"></ul>
+          <div id="connectionDetails"></div>
+          <div id="tools">
+            <a href="javascript:void(0)" id="addConnectionLink">${addNewConnection}</a>
+          </div>
+        </div>
+      </div>
+
+<div id="lib" style="display:none">
+  <form id="newConnection">
+    <label for="name">${name}</label><input name="name" placeholder="name" type="text"><br>
+    <label for="server">${server}</label><input name="server" placeholder="http://localhost:8080" type="text"><br>
+    <label for="user">${user}</label><input name="user" placeholder="username" type="text"><br>
+    <label for="password">${password}</label><input name="password" placeholder="password" type="password"><br>
+    <label for="label">${label}</label><input name="label" placeholder="${label} (facultatif)" type="text"><br>
+    <label for="desc">${description}</label><input name="desc" placeholder="Descritpion (facultatif)" type="text"><br>
+    <input value="Ajouter" class="submitBtn" type="submit">
+  </form>
+</div>
+
+      <script type="text/javascript">
+        UIsocket = io();
+        UIsocket.on('connectionsList', connectionsList )
+                .on('connectionDetails', displayConnectionDetails);
+
+      var fieldLabels = {
+        name : "${name}",
+        label : "${label}",
+        desc : "${description}",
+        user : "${user}",
+        server : "${server}",
+        password : "${password}",
+        devMode : "${devMode}"
+      }
+
+        function connectionsList( data ){        
+          $('#connectionsList').empty();
+          data.forEach( (connection) => {
+            var liConnection = $("<li data-name='" + connection + "'>" + connection + "</li>");
+            
+            $('#connectionsList').append(liConnection);
+            liConnection.on('click',getConnectionDetails)
+          })          
+        }
+
+        function getConnectionDetails(event){
+          if( UIsocket.waitingDetails )
+            return;
+          //console.log("getConnectionDetails : " , event);
+
+          UIsocket.emit('getConnectionDetails', $(event.target).data('name'));
+          event.preventDefault();
+          event.stopPropagation();
+          UIsocket.waitingDetails = true;
+        }
+
+        function displayConnectionDetails( data ){
+          //console.log("displayConnectionDetails" , data)
+          UIsocket.waitingDetails = false;
+          $('#connectionDetails').empty()
+                                .append('<h1>' + ( data.label ? data.label : data.name) + '</h1>')
+                                .append('<form data-name="'+ data.name +'"/>');
+          for(var k in data )
+            if( ['name','password'].indexOf( k ) == -1 )
+              $('#connectionDetails form').append('<label for="'+k+'">' +( fieldLabels[k] || k ) + '</label><input name="'+k+'" value="' + data[k] + '" type="text"/><br/>');
+
+             $('#connectionDetails form').append('<label for="password">Mot de passe</label><input name="password" value="' + data['password'] + '" type="password"/><br/>');
+
+            $('#connectionDetails form').append('<input type="submit" value="Modifier" class="submitBtn"/>');
+            $('#connectionDetails form').on('submit', setConnectionDetails);
+
+            var addFieldButton = $('<input type="button" value="${addField}"/>');
+            addFieldButton.on('click', addDetailsField );
+            $('#connectionDetails').append(addFieldButton)
+
+        }
+        var nbDetailsField = 0;
+        function addDetailsField(){
+          var newInputName = $('<input id="newFieldName'+nbDetailsField+'" value="" placeholder="nom JS du nouveau champs" type="text"/>');
+          var newInputValue = $('<input id="newField'+nbDetailsField+'" value="" name="" placeholder="valeur du nouveau champs" type="text"/>');
+
+          newInputName.on('change', () => {newInputValue.attr("name", newInputName.val() ); } );
+          //$('#connectionDetails form .submitBtn').before('<br/>')
+          $('#connectionDetails form .submitBtn').before($('<label>Nouveau champs</label>'))
+          $('#connectionDetails form .submitBtn').before(newInputName)
+          $('#connectionDetails form .submitBtn').before(newInputValue);
+          $('#connectionDetails form .submitBtn').before('<br/>')
+          nbDetailsField++;
+          //<label>Champs : </label><input name="__newFieldLabel" value=""/><br/><label>Valeur : </label><input name="__newFieldValue" value=""/>')
+        }
+
+        function setConnectionDetails(event){
+          if( UIsocket.waitingDetails )
+            return;
+          //console.log("getConnectionDetails : " , event);
+
+          var datas = {};
+          $('#connectionDetails form').serializeArray().forEach( ( obj )=>{
+            datas[ obj.name ] = obj.value;
+          });
+          UIsocket.emit('setConnectionDetails', $('#connectionDetails form').data('name'),datas );
+          event.preventDefault();
+          event.stopPropagation();
+          UIsocket.waitingDetails = true;
+        }
+
+        function addNewConnection(){
+          $('#connectionDetails').empty()
+                                .append('<h1>Nouvelle connection</h1>')
+                                .append( '<form>' + $('form#newConnection').html() + '</form>');
+          $('#connectionDetails form').on('submit', sendNewConnection);
+        }
+        $('#addConnectionLink').on('click', addNewConnection);
+
+        function sendNewConnection( event ){ 
+          if( UIsocket.waitingDetails )
+            return;
+          console.log("getConnectionDetails : " , event);
+
+          var datas = {};
+          $('#connectionDetails form').serializeArray().forEach( ( obj )=>{
+            datas[ obj.name ] = obj.value;
+          });
+          var name = datas['name'].toString();
+          delete datas['name'];
+          UIsocket.emit('addConnection', name, datas );
+          event.preventDefault();
+          event.stopPropagation();
+          UIsocket.waitingDetails = true;
+
+        }
+
+        UIsocket.emit('listConnections');
+      </script>
+  </body>
+</html>

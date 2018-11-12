@@ -1,0 +1,34 @@
+{
+  "author": "Cédric Rey",
+  "name": "ac-connector",
+  "version": "0.2.1",
+  "description": "Adobe Campaign Classic Connector : tools to connect NodeJS to Adobe Campaign Classic",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Adobe Campaign",
+    "Neolane"
+  ],
+  "directories": {
+    "wsdl": "./wsdl",
+    "ressources": "./ressources/*"
+  },
+  "license": "MIT",
+  "devDependencies": {
+    "soap": "0.23.0"
+  },
+  "dependencies": {
+    "socket.io": "1.3.5",
+    "soap": "0.23.0",
+    "jxon": "2.0.0-beta.5"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/cedricrey/ac-connector.git"
+  },
+  "bin": {
+    "ACCManager": "./startUI.js"
+  }
+}
