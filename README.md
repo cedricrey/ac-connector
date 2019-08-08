@@ -14,8 +14,16 @@ In this purpose, launch the command
 ```
 ACCManager
 ```
+or 
+```
+node_modules/.bin/ACCManager(.cmd)
+```
+(if it doesn't work, try :)
+```
+node node_modules/ac-connector/startUI.js
+```
 
-This will open a manager page that allows to configure severals connections
+This will open a manager page that allows to configure severals connections (if not, open http://localhost:4545/ in your browser)
 
 Those connections are stored in the local user directory (under the ".ac-connector/" folder)
 
@@ -34,6 +42,7 @@ var xtkQueryDef = ACC.xtkQueryDef;
 Then you have to get your connection using ACCLogManager class
 ```
 var login = ACCLogManager.getLogin( 'myconnection' );
+//'myconnection' is the 'name' of one of your connection
 ```
 
 When you get your 'ACCLogin' object, you can instanciate standard class, passing an object with your login with 'accLogin' name. Every method return a Promise.
