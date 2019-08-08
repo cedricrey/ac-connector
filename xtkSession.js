@@ -1,5 +1,6 @@
+"use strict";
 var soap = require('soap'),
-    ACCNLObject = require('./ACCNLObject').ACCNLObject
+    ACCNLObject = require('./ACCNLObject').ACCNLObject,
     xtkSessionWSDL = require.resolve('./wsdl/wsdl_xtksession.xml');
 
 class xtkSession extends ACCNLObject {

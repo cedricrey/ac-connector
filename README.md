@@ -46,3 +46,5 @@ var request = queryDef.ExecuteQuery(
  request.then( (result) => {console.log('result : ', result);})
         .catch( (e) => {console.log('Error ! ', e );});
 ```
+
+This API is in development

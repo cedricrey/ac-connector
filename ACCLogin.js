@@ -1,4 +1,5 @@
-var soap = require('soap');
+"use strict";
+var soap = require('soap'),
     xtkSessionWSDL = require.resolve('./wsdl/wsdl_xtksession.xml');
 
 function ACCLogin( options ){

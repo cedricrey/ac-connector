@@ -1,3 +1,4 @@
+"use strict";
 var soap = require('soap'),
     ACCNLObject = require('./ACCNLObject').ACCNLObject,
     JXON = require('jxon'),
@@ -18,7 +19,7 @@ class xtkSpecFile extends ACCNLObject {
    var onLoaded = function( err, result, raw, soapHeader) {
           if(err)
             {
-              if( err.response.statusCode == 200 )
+              if( err.response &&  err.response.statusCode && err.response.statusCode == 200 )
                 {
                   try{
                     var jxonVersion = JXON.stringToJs(raw);

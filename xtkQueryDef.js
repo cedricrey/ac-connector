@@ -1,6 +1,7 @@
+"use strict";
 var soap = require('soap'),
     JXON = require('jxon'),
-    ACCNLObject = require('./ACCNLObject').ACCNLObject;
+    ACCNLObject = require('./ACCNLObject').ACCNLObject,
     xtkQueryDefWSDL = require.resolve('./wsdl/wsdl_xtkquerydef.xml');
 
 class xtkQueryDef extends ACCNLObject {

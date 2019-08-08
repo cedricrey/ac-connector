@@ -1,6 +1,7 @@
+"use strict";
 var soap = require('soap'),
     JXON = require('jxon'),
-    ACCNLObject = require('./ACCNLObject').ACCNLObject;
+    ACCNLObject = require('./ACCNLObject').ACCNLObject,
     nmsDeliveryWSDL = require.resolve('./wsdl/wsdl_nmsDelivery.xml');
 
 class nmsDelivery extends ACCNLObject {

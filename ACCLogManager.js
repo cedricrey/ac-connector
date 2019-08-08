@@ -1,3 +1,4 @@
+"use strict";
 var soap = require('soap'),
     path = require('path'),
     fs = require('fs'),
