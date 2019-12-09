@@ -23,9 +23,11 @@ class xtkQueryDef extends ACCNLObject {
             {
               var jxonVersion = JXON.stringToJs(raw);
               jxonVersion = jxonVersion['SOAP-ENV:Envelope']['SOAP-ENV:Body'].ExecuteQueryResponse.pdomOutput;
-              console.log('jxonVersion ? ', jxonVersion);
+              //console.log('jxonVersion ? ', jxonVersion);
               this.executeQueryResolve( JXON.jsToXml({result : jxonVersion}) );
             }
+          else if( this.options.outputFormat && this.options.outputFormat.toString().toUpperCase() == "RAW")
+            this.executeQueryResolve( raw );
           else
             this.executeQueryResolve( result.pdomOutput );
         }
