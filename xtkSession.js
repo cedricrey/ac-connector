@@ -33,4 +33,26 @@ class xtkSession extends ACCNLObject {
   }  
 }
 
+  GetEntityIfMoreRecent (/*String*/ pk, /*String*/ md5, /*Boolean*/ mustExist) {
+    var promise = new Promise( (resolve, reject ) => {this.getEntityIfMoreRecentResolve = resolve; this.getEntityIfMoreRecentReject = reject;});
+    var onLoaded = function(err, result, raw, soapHeader) {
+      if(err){
+        this.getEntityIfMoreRecentReject(err);
+      }
+      this.getEntityIfMoreRecentResolve(result.pdomDoc);
+    }.bind(this);
+
+    this.clientPromise.then(function(pk, md5, mustExist){
+      this.client.GetEntityIfMoreRecent({
+        sessiontoken : this.accLogin.sessionToken,
+        pk : pk,
+        md5 : md5,
+        mustExist : mustExist,
+      },
+        onLoaded
+      )}.bind(this, pk, md5, mustExist)
+    );
+    return promise;
+  }
+  
 exports.xtkSession = xtkSession;
