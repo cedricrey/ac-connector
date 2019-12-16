@@ -44,7 +44,7 @@ Load the library and the class needed
 Then you have to get your connection using ACCLogManager class
 ```js
 var login = ACCLogManager.getLogin( 'My Connection Name' );
-//'myconnection' is the 'name' of one of your connection
+//''My Connection Name' is the 'name' of one of your connection
 ```
 
 When you get your `ACCLogin` object, you can instanciate standard class, passing an object with your login with 'accLogin' name. Every method return a Promise.
