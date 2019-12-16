@@ -11,11 +11,11 @@ class nmsDelivery extends ACCNLObject {
     super( options );
   }
   GetMirrorURL( deliveryId, message ){
-    var promise = new Promise( (resolve, reject ) => {this.executeQueryResolve = resolve; this.executeQueryReject = reject;})
+    var promise = new Promise( (resolve, reject ) => {this.getMirrorURLResolve = resolve; this.getMirrorURLReject = reject;})
     var onLoaded = function( err, result, raw, soapHeader ){
       if( err )
       {
-        this.executeQueryReject( err );
+        this.getMirrorURLReject( err );
       }
       else
         {
@@ -24,10 +24,10 @@ class nmsDelivery extends ACCNLObject {
               var jxonVersion = JXON.stringToJs(raw);
               jxonVersion = jxonVersion['SOAP-ENV:Envelope']['SOAP-ENV:Body'].GetMirrorURLResponse.pdomOutput;
               console.log('jxonVersion ? ', jxonVersion);
-              this.executeQueryResolve( JXON.jsToXml({result : jxonVersion}) );
+              this.getMirrorURLResolve( JXON.jsToXml({result : jxonVersion}) );
             }
           else
-            this.executeQueryResolve( result.pdomOutput );
+            this.getMirrorURLResolve( result.pdomOutput );
         }
     }.bind( this );
 
@@ -43,6 +43,37 @@ class nmsDelivery extends ACCNLObject {
     );
     return promise;
   }
+
+  BuildPreviewFromId( /* Number */ deliveryId, /* JXON or XML as String */ params ){
+    if( typeof params == "object" )
+      params = JSON.stringify( params );
+
+    var promise = new Promise( (resolve, reject ) => {this.buildPreviewFromIdResolve = resolve; this.buildPreviewFromIdReject = reject;})
+    var onLoaded = function( err, result, raw, soapHeader ){
+      if( err )
+      {
+        this.buildPreviewFromIdReject( err );
+      }
+      else
+      {
+        this.buildPreviewFromIdResolve( [ result.pdomPreview.preview , result.pdomQueryResult.queryResult ]);
+      }
+    }.bind( this );
+
+    this.clientPromise.then(
+    function(){
+      this.client.BuildPreviewFromId({
+        sessiontoken : this.accLogin.sessionToken,
+        lDeliveryId : deliveryId,
+        domParams : {$xml :params}
+      },
+        onLoaded
+      )}.bind(this)
+    );
+    return promise;
+  }
+
+  
 }
 
 exports.nmsDelivery = nmsDelivery;

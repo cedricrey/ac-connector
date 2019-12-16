@@ -111,3 +111,23 @@ $ node index.js
   { attributes: { id: 'xxx' } },
   { attributes: { id: 'xxx' } } ]
 ```
+
+## Build Delivrery Preview
+```js
+  var delivery = new nmsDelivery({ accLogin : login });
+  delivery.BuildPreviewFromId( 123456 , "<params content='html' filter='@id=1234'/>")
+  .then(  ( result ) => { console.log('Preview :' , result[0], result[1]);} );
+
+```
+see [Adobe Campaign Classic - API Documentation - nms delivery - BuildPreviewFromId](https://final-docs.campaign.adobe.com/doc/AC/en/jsapi/sm-delivery-BuildPreviewFromId.html) for more info
+
+## Generate package
+```js
+  var specFile = new xtkSpecFile({ accLogin : login });
+  specFile.GenerateDoc( specDefinition );
+  specFile.then( (doc) => {
+    console.log('Here is the package : ', doc );
+  } );
+
+```
+see [Adobe Campaign Classic - API Documentation - xtk specFile - GenerateDoc](https://final-docs.campaign.adobe.com/doc/AC/en/jsapi/sm-specFile-GenerateDoc.html) for more info

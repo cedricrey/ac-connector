@@ -31,7 +31,6 @@ class xtkSession extends ACCNLObject {
     );
     return promise;
   }  
-}
 
   GetEntityIfMoreRecent (/*String*/ pk, /*String*/ md5, /*Boolean*/ mustExist) {
     var promise = new Promise( (resolve, reject ) => {this.getEntityIfMoreRecentResolve = resolve; this.getEntityIfMoreRecentReject = reject;});
@@ -55,4 +54,5 @@ class xtkSession extends ACCNLObject {
     return promise;
   }
   
+}
 exports.xtkSession = xtkSession;
