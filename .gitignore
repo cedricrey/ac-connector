@@ -3,3 +3,4 @@ package-lock.json
 node_modules/
 **/*.bmp
 ressources/ui/images/backgroundcnx.bmp
+desktop.ini
