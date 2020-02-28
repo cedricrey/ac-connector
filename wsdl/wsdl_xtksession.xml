@@ -1225,7 +1225,7 @@
 	</binding>
 	<service name="XtkSession">
 		<port binding="tns:sessionMethodsSoap" name="sessionMethodsSoap">
-			<soap:address location="http://neo2indus-dev:8080/nl/jsp/soaprouter.jsp"/>
+			<soap:address location=""/>
 		</port>
 	</service>
 </definitions>
