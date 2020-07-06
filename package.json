@@ -1,7 +1,7 @@
 {
   "author": "Cédric Rey",
   "name": "ac-connector",
-  "version": "0.2.10",
+  "version": "0.2.11",
   "description": "Adobe Campaign Classic Connector : tools to connect NodeJS to Adobe Campaign Classic",
   "main": "index.js",
   "scripts": {

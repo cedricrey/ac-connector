@@ -54,13 +54,13 @@ class xtkBuilder extends ACCNLObject {
         if(err){
           this.buildOutputNavTreeReject(err);
         }
-        this.buildOutputNavTreeResolve(result.pdomDoc);
+        this.buildOutputNavTreeResolve( result.pdomNavtree.navtree );
       }.bind(this);
 
-      this.clientPromise.then(function(pk, md5, mustExist){
+      this.clientPromise.then(function(navtreeSource, save){
         this.client.BuildOutputNavTree({
           sessiontoken : this.accLogin.sessionToken,
-          navtreeSource : navtreeSource,
+          navtreeSource : {$xml : navtreeSource},
           save : save
         },
           onLoaded
