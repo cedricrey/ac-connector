@@ -4,7 +4,7 @@ var soap = require('soap'),
     xtkBuilderWSDL = require.resolve('./wsdl/wsdl_xtkbuilder.xml');
 
 class xtkBuilder extends ACCNLObject {
-  constructor ( options ){    
+  constructor ( options ){
     options = options || {};
     options.wsdl = options.wsdl || xtkBuilderWSDL;
     super( options );
@@ -21,15 +21,15 @@ class xtkBuilder extends ACCNLObject {
                 this.executeQueryReject( { url : this.accLogin.endpoint, error : err, result, raw } );
                 console.log('xtkSpecFile.GenerateDoc() error on result', err.body);
                 //throw  {message : "xtkSpecFile.GenerateDoc() error on result", err};
-                return              
+                return
             }
             try{
               this.executeQueryResolve( [result,  raw, soapHeader] );
             }
             catch( e ){
               console.log('xtkSpecFile.GenerateDoc() error on JXON', e);
-              this.executeQueryReject( { error : e, connector : this.accLogin.server });   
-              //throw {message : "xtkSpecFile.GenerateDoc() error on JXON", err};       
+              this.executeQueryReject( { error : e, connector : this.accLogin.server });
+              //throw {message : "xtkSpecFile.GenerateDoc() error on JXON", err};
             }
       }.bind(this);
 
@@ -38,14 +38,36 @@ class xtkBuilder extends ACCNLObject {
       //console.log("Got ACCLogin ? ", this.accLogin.sessionToken);
       this.client.InstallPackage({
         sessiontoken : this.accLogin.sessionToken,
-        parameters : {$xml : packg} 
+        parameters : {$xml : packg}
       },
         onLoaded,
         {forever : true}
       )}.bind(this, packg)
     );
     return promise;
-  }  
+  };
+
+
+    BuildOutputNavTree (/*XML String*/ navtreeSource, /*Boolean*/ save) {
+      var promise = new Promise( (resolve, reject ) => {this.buildOutputNavTreeResolve = resolve; this.buildOutputNavTreeReject = reject;});
+      var onLoaded = function(err, result, raw, soapHeader) {
+        if(err){
+          this.buildOutputNavTreeReject(err);
+        }
+        this.buildOutputNavTreeResolve(result.pdomDoc);
+      }.bind(this);
+
+      this.clientPromise.then(function(pk, md5, mustExist){
+        this.client.BuildOutputNavTree({
+          sessiontoken : this.accLogin.sessionToken,
+          navtreeSource : navtreeSource,
+          save : save
+        },
+          onLoaded
+        )}.bind(this, navtreeSource, save)
+      );
+      return promise;
+    }
 }
 
 exports.xtkBuilder = xtkBuilder;
