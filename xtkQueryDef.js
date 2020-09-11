@@ -5,17 +5,18 @@ var soap = require('soap'),
     xtkQueryDefWSDL = require.resolve('./wsdl/wsdl_xtkquerydef.xml');
 
 class xtkQueryDef extends ACCNLObject {
-  constructor ( options ){    
+  constructor ( options ){
     options = options || {};
     options.wsdl = options.wsdl || xtkQueryDefWSDL;
     super( options );
   }
   ExecuteQuery( query ){
-    var promise = new Promise( (resolve, reject ) => {this.executeQueryResolve = resolve; this.executeQueryReject = reject;})
-    var onLoaded = function( err, result, raw, soapHeader ){
+    var currentExecuteQueryResolve, currentExecuteQueryReject;
+    var promise = new Promise( (resolve, reject ) => { currentExecuteQueryResolve = resolve; currentExecuteQueryReject = reject;})
+    var onLoaded = ( err, result, raw, soapHeader ) => {
       if( err )
       {
-        this.executeQueryReject( err );
+        executeQueryReject( err );
       }
       else
         {
@@ -24,20 +25,20 @@ class xtkQueryDef extends ACCNLObject {
               var jxonVersion = JXON.stringToJs(raw);
               jxonVersion = jxonVersion['SOAP-ENV:Envelope']['SOAP-ENV:Body'].ExecuteQueryResponse.pdomOutput;
               //console.log('jxonVersion ? ', jxonVersion);
-              this.executeQueryResolve( JXON.jsToXml({result : jxonVersion}) );
+              currentExecuteQueryResolve( JXON.jsToXml({result : jxonVersion}) );
             }
           else if( this.options.outputFormat && this.options.outputFormat.toString().toUpperCase() == "RAW")
-            this.executeQueryResolve( raw );
+            currentExecuteQueryResolve( raw );
           else
-            this.executeQueryResolve( result.pdomOutput );
+            currentExecuteQueryResolve( result.pdomOutput );
         }
-    }.bind( this );
+    };
 
     this.clientPromise.then(
     function( query ){
       this.client.ExecuteQuery({
         sessiontoken : this.accLogin.sessionToken,
-        domDoc : {$xml : query} 
+        domDoc : {$xml : query}
       },
         onLoaded
       )}.bind(this, query)
@@ -46,32 +47,34 @@ class xtkQueryDef extends ACCNLObject {
   }
 
   SelectAll( query ){
-    var promise = new Promise( (resolve, reject ) => {this.selectAllResolve = resolve; this.selectAllReject = reject;})
-    var onLoaded = function( err, result, raw, soapHeader ){
+    var currentSelectAllResolve, currentSelectAllReject;
+    var promise = new Promise( (resolve, reject ) => {currentSelectAllResolve = resolve; currentSelectAllReject = reject;})
+    var onLoaded = ( err, result, raw, soapHeader ) => {
       if(err){
-        return this.selectAllReject( err );
+        return currentSelectAllReject( err );
       }
       if(this.options.outputFormat && this.options.outputFormat.toString().toUpperCase() == "RAW"){
-        this.selectAllResolve(raw);
+        currentSelectAllResolve(raw);
       } else if( this.options.outputFormat && this.options.outputFormat.toString().toUpperCase() == "XML"){
         var jxonVersion = JXON.stringToJs(raw);
         jxonVersion = jxonVersion['SOAP-ENV:Envelope']['SOAP-ENV:Body'].ExecuteQueryResponse.pdomOutput;
         console.log('jxonVersion ? ', jxonVersion);
-        this.selectAllResolve( JXON.jsToXml({result : jxonVersion}) );
+        currentSelectAllResolve( JXON.jsToXml({result : jxonVersion}) );
       } else {
-        this.selectAllResolve( result.pdomOutput );
+        //console.log('selectAll ? ', result);
+        currentSelectAllResolve( result.entity.queryDef );
       }
-    }.bind(this);
+    };
 
     this.clientPromise.then(
-    function( query ){
+    (  ) => {
       this.client.SelectAll({
         sessiontoken : this.accLogin.sessionToken,
         entity : {$xml : query},
         duplicate: false
       },
         onLoaded
-      )}.bind(this, query)
+      )}
     );
     return promise;
   }

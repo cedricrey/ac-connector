@@ -4,44 +4,46 @@ var soap = require('soap'),
     xtkSessionWSDL = require.resolve('./wsdl/wsdl_xtksession.xml');
 
 class xtkSession extends ACCNLObject {
-  constructor ( options ){    
+  constructor ( options ){
     options = options || {};
     options.wsdl = options.wsdl || xtkSessionWSDL;
     super( options );
   }
 
   Write( contentToSend ) {
-   var promise = new Promise( (resolve, reject ) => {this.executeQueryResolve = resolve; this.executeQueryReject = reject;});
-   var onLoaded = function( err, result, raw, soapHeader) {
+   var currentWriteResolve, currentWriteReject;
+   var promise = new Promise( (resolve, reject ) => {currentWriteResolve = resolve; currentWriteReject = reject;});
+   var onLoaded = ( err, result, raw, soapHeader) => {
           if(err)
             {
-              this.executeQueryReject( err );
+              currentWriteReject( err );
             }
-              this.executeQueryResolve( result );
-      }.bind(this)
+          currentWriteResolve( result );
+      }
 
     this.clientPromise.then(
-    function( contentToSend ){
-      this.client.Write({
-        sessiontoken : this.accLogin.sessionToken,
-        domDoc : {$xml : contentToSend} 
-      },
-        onLoaded
-      )}.bind(this, contentToSend)
+      ( ) => {
+        this.client.Write({
+          sessiontoken : this.accLogin.sessionToken,
+          domDoc : {$xml : contentToSend}
+        },
+          onLoaded
+        )}
     );
     return promise;
-  }  
+  }
 
   GetEntityIfMoreRecent (/*String*/ pk, /*String*/ md5, /*Boolean*/ mustExist) {
-    var promise = new Promise( (resolve, reject ) => {this.getEntityIfMoreRecentResolve = resolve; this.getEntityIfMoreRecentReject = reject;});
-    var onLoaded = function(err, result, raw, soapHeader) {
+    var currentGetEntityResolve, currentGetEntityReject;
+    var promise = new Promise( (resolve, reject ) => {currentGetEntityResolve = resolve; currentGetEntityReject = reject;});
+    var onLoaded = (err, result, raw, soapHeader) => {
       if(err){
-        this.getEntityIfMoreRecentReject(err);
+        currentGetEntityReject(err);
       }
-      this.getEntityIfMoreRecentResolve(result.pdomDoc);
-    }.bind(this);
+      currentGetEntityResolve(result.pdomDoc);
+    };
 
-    this.clientPromise.then(function(pk, md5, mustExist){
+    this.clientPromise.then( ( ) => {
       this.client.GetEntityIfMoreRecent({
         sessiontoken : this.accLogin.sessionToken,
         pk : pk,
@@ -49,10 +51,10 @@ class xtkSession extends ACCNLObject {
         mustExist : mustExist,
       },
         onLoaded
-      )}.bind(this, pk, md5, mustExist)
+      )}
     );
     return promise;
   }
-  
+
 }
 exports.xtkSession = xtkSession;
