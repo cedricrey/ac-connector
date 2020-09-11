@@ -5,17 +5,18 @@ var soap = require('soap'),
     nmsDeliveryWSDL = require.resolve('./wsdl/wsdl_nmsDelivery.xml');
 
 class nmsDelivery extends ACCNLObject {
-  constructor ( options ){    
+  constructor ( options ){
     options = options || {};
     options.wsdl = options.wsdl || nmsDeliveryWSDL;
     super( options );
   }
   GetMirrorURL( deliveryId, message ){
-    var promise = new Promise( (resolve, reject ) => {this.getMirrorURLResolve = resolve; this.getMirrorURLReject = reject;})
-    var onLoaded = function( err, result, raw, soapHeader ){
+    var currentGetMirrorURLResolve, currentGetMirrorURLReject
+    var promise = new Promise( (resolve, reject ) => {currentGetMirrorURLResolve = resolve; currentGetMirrorURLReject = reject;})
+    var onLoaded = ( err, result, raw, soapHeader ) => {
       if( err )
       {
-        this.getMirrorURLReject( err );
+        currentGetMirrorURLReject( err );
       }
       else
         {
@@ -24,22 +25,22 @@ class nmsDelivery extends ACCNLObject {
               var jxonVersion = JXON.stringToJs(raw);
               jxonVersion = jxonVersion['SOAP-ENV:Envelope']['SOAP-ENV:Body'].GetMirrorURLResponse.pdomOutput;
               console.log('jxonVersion ? ', jxonVersion);
-              this.getMirrorURLResolve( JXON.jsToXml({result : jxonVersion}) );
+              currentGetMirrorURLResolve( JXON.jsToXml({result : jxonVersion}) );
             }
           else
-            this.getMirrorURLResolve( result.pdomOutput );
+            currentGetMirrorURLResolve( result.pdomOutput );
         }
-    }.bind( this );
+    };
 
     this.clientPromise.then(
-    function( query ){
+    ( ) => {
       this.client.GetMirrorURL({
         sessiontoken : this.accLogin.sessionToken,
         lDeliveryId : deliveryId,
         strMessage : message
       },
         onLoaded
-      )}.bind(this, query)
+      )}
     );
     return promise;
   }
@@ -48,32 +49,33 @@ class nmsDelivery extends ACCNLObject {
     if( typeof params == "object" )
       params = JSON.stringify( params );
 
-    var promise = new Promise( (resolve, reject ) => {this.buildPreviewFromIdResolve = resolve; this.buildPreviewFromIdReject = reject;})
-    var onLoaded = function( err, result, raw, soapHeader ){
+    var currentBuildPreviewFromIdResolve, currentBuildPreviewFromIdReject;
+    var promise = new Promise( (resolve, reject ) => {currentBuildPreviewFromIdResolve = resolve; currentBuildPreviewFromIdReject = reject;})
+    var onLoaded = ( err, result, raw, soapHeader ) => {
       if( err )
       {
-        this.buildPreviewFromIdReject( err );
+        currentBuildPreviewFromIdReject( err );
       }
       else
       {
-        this.buildPreviewFromIdResolve( [ result.pdomPreview.preview , result.pdomQueryResult.queryResult ]);
+        currentBuildPreviewFromIdResolve( [ result.pdomPreview.preview , result.pdomQueryResult.queryResult ]);
       }
-    }.bind( this );
+    };
 
     this.clientPromise.then(
-    function(){
+     () => {
       this.client.BuildPreviewFromId({
         sessiontoken : this.accLogin.sessionToken,
         lDeliveryId : deliveryId,
         domParams : {$xml :params}
       },
         onLoaded
-      )}.bind(this)
+      )}
     );
     return promise;
   }
 
-  
+
 }
 
 exports.nmsDelivery = nmsDelivery;
