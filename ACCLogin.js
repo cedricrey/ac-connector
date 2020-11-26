@@ -14,7 +14,10 @@ function ACCLogin( options ){
     this.resolveLoginPromise = resolve;
     this.rejectLoginPromise = reject;
   });
-  this.writePromise = soap.createClientAsync( xtkSessionWSDL, {endpoint : this.endpoint} );
+  //SSL BYPASS... TRYED TO LOAD LOCALS .PEM BUT UNABLE TO SUCCESS...
+  var request = require('request');
+  var specialRequest = request.defaults({strictSSL:false});
+  this.writePromise = soap.createClientAsync( xtkSessionWSDL, {endpoint : this.endpoint, request : specialRequest} );
 }
 
 ACCLogin.prototype.login = function(){  
@@ -22,7 +25,10 @@ ACCLogin.prototype.login = function(){
   this.loginRequested = true;
   if( ! this.writePromise )
     {
-      this.writePromise = soap.createClientAsync( xtkSessionWSDL, {endpoint : this.endpoint} );      
+      //SSL BYPASS... TRYED TO LOAD LOCALS .PEM BUT UNABLE TO SUCCESS...
+      var request = require('request');
+      var specialRequest = request.defaults({strictSSL:false});
+      this.writePromise = soap.createClientAsync( xtkSessionWSDL, {endpoint : this.endpoint, request : specialRequest} );      
     }
   this.writePromise.then(
      function(client){

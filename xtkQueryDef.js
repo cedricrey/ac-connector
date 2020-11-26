@@ -16,7 +16,7 @@ class xtkQueryDef extends ACCNLObject {
     var onLoaded = ( err, result, raw, soapHeader ) => {
       if( err )
       {
-        executeQueryReject( err );
+        currentExecuteQueryReject( err );
       }
       else
         {

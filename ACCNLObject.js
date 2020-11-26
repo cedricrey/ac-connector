@@ -32,7 +32,10 @@ var soap = require('soap'),
   }
   //Generic client creation. Based on a WDSL defined : by default above, but highly recommended overridden by the extension
   createClient(){
-    soap.createClientAsync( this.wsdl, {endpoint : this.endpoint} )
+    //SSL BYPASS... TRYED TO LOAD LOCALS .PEM BUT UNABLE TO SUCCESS...
+    var request = require('request');
+    var specialRequest = request.defaults({strictSSL:false});
+    soap.createClientAsync( this.wsdl, {endpoint : this.endpoint, request: specialRequest} )
         .then( ( client ) => {
             this.client = client;
             this.client.addHttpHeader('X-Security-Token', this.accLogin.securityToken);
