@@ -1,11 +1,27 @@
 {
-  "addNewConnection" : "Ajouter une nouvelle connexion",
-  "name" : "Nom de la connexion",
-  "server" : "URL du serveur",
-  "user" : "Utilisateur",
-  "password" : "Mot de passe",
-  "label" : "Titre",
-  "description" : "Description",
-  "devMode" : "Mode avancé (développeur)",
-  "addField" : "Ajouter un nouveau champs"
+  "addNewConnection"       : "Ajouter une nouvelle connexion",
+  "name"                   : "Nom de la connexion",
+  "server"                 : "URL du serveur",
+  "label"                  : "Titre",
+  "description"            : "Description",
+  "devMode"                : "Mode avancé (développeur)",
+  "addField"               : "Ajouter un nouveau champ",
+  "add"                    : "Ajouter",
+  "edit"                   : "Enregistrer",
+  "fieldNamePlaceholder"   : "nom du champ",
+  "fieldValuePlaceholder"  : "valeur",
+
+  "authType"           : "Type de connexion",
+  "authType_password"  : "Utilisateur / Mot de passe (ACC Classic v7)",
+  "authType_ims"       : "Adobe IMS / OAuth2 (ACC v8)",
+
+  "user"               : "Utilisateur",
+  "password"           : "Mot de passe",
+
+  "imsEndpoint"        : "Endpoint IMS",
+  "clientId"           : "Client ID",
+  "clientSecret"       : "Client Secret",
+  "orgId"              : "IMS Org ID",
+  "technicalAccountId" : "Technical Account ID",
+  "scope"              : "Scope OAuth2"
 }

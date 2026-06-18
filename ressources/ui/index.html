@@ -1,297 +1,452 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <title>Adobe Campaign Connector Manager</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.7.5/socket.io.min.js"></script>
+  <style>
+    @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,600);
 
-    <!-- Always force latest IE rendering engine (even in intranet) & Chrome Frame
-    Remove this if you use the .htaccess -->
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    *, *::before, *::after { box-sizing: border-box; }
 
-    <title>index</title>
-    <meta name="description" content="">
-    <meta name="author" content="Ced">
+    html, body {
+      padding: 0; margin: 0;
+      font-family: 'Open Sans', sans-serif;
+      color: #575757;
+      background: url('images/backgroundcnx.png') repeat fixed center center / cover;
+      min-height: 100vh;
+    }
 
-    <meta name="viewport" content="width=device-width; initial-scale=1.0">
+    .card {
+      width: 540px;
+      margin: 20px auto;
+      padding: 1.25em 1.5em;
+      border-radius: 8px;
+      background: #fff;
+      box-shadow: 0 2px 12px rgba(0,0,0,.12);
+    }
 
-    <!-- Replace favicon.ico & apple-touch-icon.png in the root of your domain and delete these references -->
-    <link rel="shortcut icon" href="/favicon.ico">
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
-    <script src="//code.jquery.com/jquery-1.11.0.min.js"></script>
-    <style>
-      @import url(http://fonts.googleapis.com/css?family=Open+Sans:400,300);
-      html{
-          padding:0;
-          margin:0;
-      }
-      body {
-        padding: 20px 10px 10px;
-        margin:0;
-        font-family: 'Open Sans', sans-serif;
-        color: #575757;
-        background: url('images/backgroundcnx.png') repeat fixed center center /cover rgba(0, 0, 0, 0);
+    header.card { padding: 1em 1.5em; display: flex; align-items: center; gap: 1em; }
+    header.card img { height: 40px; }
+    header.card h1 { margin: 0; font-size: 1.15rem; font-weight: 600; color: #333; }
 
-      }
-      header{
-        padding:1em;
-        background-color:#FFF;
-        width:500px;
-        margin:0 auto;
-        border-radius: 0.5em;
-      }
-      #connectionManager
-      {
-        width:500px;
-        margin:10px auto;
-        padding:1em;
-        border-radius: 0.5em;
-        background-color:#FFF;
-      }
-      #connectionsList {
-        width:200px;
-        margin-left:260px;
-        text-align:right;
-      }
-      #connectionsList li{
-        list-style: none;
-        padding:10px;
-        margin:0;
-        text-decoration: underline;
-        color: #36C;
-        cursor:pointer;
-        transition:1s ease color,1s ease background-color;
-        border-radius: 4.8px;
-      }
-      #connectionsList li:hover{
-        list-style: none;
-        text-decoration: none;
-        color: #FFF;
-        background-color: #36C;
-        cursor:pointer;
-      }
-      #connectionDetails form input[type=text],
-      #connectionDetails form input[type=password]{
-          text-align: left;
-          -webkit-appearance: none;
-          -webkit-font-smoothing: antialiased;
-          box-sizing: border-box;
-          margin-bottom: .6875;
-          -moz-box-sizing: border-box;
-          display: inline-block;
-          width: 100%;
-          height: 34px;
-          -webkit-transition: border-color .3s ease;
-          -moz-transition: border-color .3s ease;
-          -o-transition: border-color .3s ease;
-          -ms-transition: border-color .3s ease;
-          transition: border-color .3s ease;
-          -webkit-border-radius: 4.8px;
-          -moz-border-radius: 4.8px;
-          border-radius: 4.8px;
-          -webkit-border-radius: .3rem;
-          -moz-border-radius: .3rem;
-          border-radius: .3rem;
-          border: 1px solid #d5d5d5;
-          font-size: 16px;
-          font-size: 1rem;
-          padding: 4.8px 12.8px 8px 10.4px;
-          padding: .3rem .8rem .5rem .65rem;
-          line-height: 19.2px;
-          line-height: 1.2rem;
-          background-color: #fff;
-          color: #535353;
-      }
-      #connectionDetails form input[type=text]:focus, #connectionDetails form input[type=password]:focus {
-          outline: 0;
-          border-color: #009df5;
-          border-width: 2px;
-          padding: 3.8px 11.8px 7px 9.4px;
-      }
-      #connectionDetails form label{
-        display:block;
-        margin-top:10px;
-        padding-bottom: 5px;
-        font-size: 16px;
-        color: #A0A0A0;
-      }
-      input[type=submit]{
-        font-size: 16px;
-        padding: 6.4px 7.2px 7.2px 7.2px;
-        -webkit-border-radius: 6.4px;
-        -moz-border-radius: 6.4px;
-        border-radius: 6.4px;
-        -webkit-transition: background-color .5s ease;
-        -moz-transition: background-color .5s ease;
-        -o-transition: background-color .5s ease;
-        -ms-transition: background-color .5s ease;
-        transition: background-color .5s ease;
-        text-transform: uppercase;
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        background-color: #009df5;
-        border: 0;
-        box-sizing: border-box;
-        color: #fff;
-        cursor: pointer;
-        display: inline-block;
-        font-family: inherit;
-        font-weight: 500;
-        text-align: center;
-        text-decoration: none;
-        text-shadow: none;
-        vertical-align: middle;
-        width: 100%;
-        height: 34px;
-        margin-top:20px
-      }
-      input[type=submit]:hover, input[type=submit]:focus {
-        background-color: #2a78b8;
-      }
-    </style>
-  </head>
+    /* ── Connection list ── */
+    #connectionsList { list-style: none; padding: 0; margin: 0 0 .5em; }
+    #connectionsList li {
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      color: #36C;
+      text-decoration: underline;
+      transition: background-color .2s, color .2s;
+    }
+    #connectionsList li:hover { background: #36C; color: #fff; text-decoration: none; }
 
-  <body>
-      <div>
-        <header>
-          <div>
-            <img src="/images/logo_ACC.png"/>
-          </div>
-          <h1>Adobe Campaign Connector Manager</h1>
-        </header>
-        <div id="connectionManager">
-          <ul id="connectionsList"></ul>
-          <div id="connectionDetails"></div>
-          <div id="tools">
-            <a href="javascript:void(0)" id="addConnectionLink">${addNewConnection}</a>
-          </div>
+    #tools { margin-top: .5em; }
+    #addConnectionLink { color: #36C; cursor: pointer; font-size: .9rem; }
+    #addConnectionLink:hover { text-decoration: underline; }
+
+    /* ── Formulaire ── */
+    .form-section {
+      border: 1px solid #e8e8e8;
+      border-radius: 6px;
+      padding: .75em 1em;
+      margin: .75em 0;
+    }
+    .form-section legend {
+      font-size: .75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      color: #999;
+      padding: 0 .4em;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+      padding-bottom: 4px;
+      font-size: .875rem;
+      color: #888;
+    }
+
+    input[type=text],
+    input[type=password],
+    input[type=url],
+    select {
+      width: 100%;
+      height: 36px;
+      padding: 4px 10px;
+      border: 1px solid #d5d5d5;
+      border-radius: 5px;
+      font-size: 1rem;
+      font-family: inherit;
+      color: #333;
+      background: #fff;
+      transition: border-color .2s;
+      appearance: none;
+    }
+    input[type=text]:focus,
+    input[type=password]:focus,
+    input[type=url]:focus,
+    select:focus {
+      outline: none;
+      border-color: #009df5;
+      border-width: 2px;
+    }
+
+    /* Auth type selector — highlight */
+    .auth-type-select {
+      font-weight: 600;
+      color: #004f99;
+      border-color: #009df5;
+      background: #f0f8ff;
+      cursor: pointer;
+    }
+
+    /* Conditional auth panels */
+    .auth-panel { display: none; }
+    .auth-panel.active { display: block; }
+
+    input[type=submit], .btn-secondary {
+      display: block;
+      width: 100%;
+      height: 38px;
+      margin-top: 16px;
+      border: 0;
+      border-radius: 6px;
+      font-size: .95rem;
+      font-family: inherit;
+      font-weight: 500;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background-color .3s;
+    }
+    input[type=submit] { background: #009df5; color: #fff; }
+    input[type=submit]:hover { background: #0080cc; }
+    .btn-secondary {
+      background: #f0f0f0; color: #555;
+      margin-top: 8px;
+    }
+    .btn-secondary:hover { background: #ddd; }
+
+    .form-title { margin: 0 0 .5em; font-size: 1.1rem; color: #333; }
+
+    .badge-v7, .badge-v8 {
+      display: inline-block;
+      font-size: .7rem;
+      font-weight: 700;
+      padding: 1px 7px;
+      border-radius: 20px;
+      vertical-align: middle;
+      margin-left: 6px;
+    }
+    .badge-v7 { background: #eee; color: #777; }
+    .badge-v8 { background: #d0f0e0; color: #1a7a45; }
+  </style>
+</head>
+<body>
+
+  <header class="card">
+    <img src="/images/logo_ACC.png" alt="Adobe Campaign">
+    <h1>Adobe Campaign Connector Manager</h1>
+  </header>
+
+  <div class="card" id="connectionManager">
+    <ul id="connectionsList"></ul>
+    <div id="connectionDetails"></div>
+    <div id="tools">
+      <a href="#" id="addConnectionLink">${addNewConnection}</a>
+    </div>
+  </div>
+
+  <!-- ══ Template: new connection ══════════════════════════════════════════ -->
+  <template id="tpl-new-connection">
+    <h2 class="form-title">${addNewConnection}</h2>
+    <form id="newConnectionForm">
+
+      <fieldset class="form-section">
+        <legend>${name}</legend>
+        <label for="nc-name">${name}</label>
+        <input id="nc-name" name="name" placeholder="ex: Prod ACC v8" type="text" required>
+        <label for="nc-label">${label}</label>
+        <input id="nc-label" name="label" placeholder="${label}" type="text">
+        <label for="nc-desc">${description}</label>
+        <input id="nc-desc" name="desc" placeholder="${description}" type="text">
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend>${server}</legend>
+        <label for="nc-server">${server}</label>
+        <input id="nc-server" name="server" placeholder="https://myinstance.campaign.adobe.com" type="url">
+      </fieldset>
+
+      <fieldset class="form-section">
+        <legend>${authType}</legend>
+        <label for="nc-authType">${authType}</label>
+        <select id="nc-authType" name="authType" class="auth-type-select">
+          <option value="password">${authType_password}</option>
+          <option value="ims">${authType_ims}</option>
+        </select>
+
+        <!-- User/password panel -->
+        <div class="auth-panel active" data-panel="password">
+          <label for="nc-user">${user}</label>
+          <input id="nc-user" name="user" placeholder="${user}" type="text" autocomplete="username">
+          <label for="nc-password">${password}</label>
+          <input id="nc-password" name="password" placeholder="${password}" type="password" autocomplete="current-password">
         </div>
-      </div>
 
-<div id="lib" style="display:none">
-  <form id="newConnection">
-    <label for="name">${name}</label><input name="name" placeholder="name" type="text"><br>
-    <label for="server">${server}</label><input name="server" placeholder="http://localhost:8080" type="text"><br>
-    <label for="user">${user}</label><input name="user" placeholder="username" type="text"><br>
-    <label for="password">${password}</label><input name="password" placeholder="password" type="password"><br>
-    <label for="label">${label}</label><input name="label" placeholder="${label} (facultatif)" type="text"><br>
-    <label for="desc">${description}</label><input name="desc" placeholder="Descritpion (facultatif)" type="text"><br>
-    <input value="Ajouter" class="submitBtn" type="submit">
-  </form>
-</div>
+        <!-- IMS panel -->
+        <div class="auth-panel" data-panel="ims">
+          <label for="nc-imsEndpoint">${imsEndpoint}</label>
+          <input id="nc-imsEndpoint" name="imsEndpoint" value="https://ims-na1.adobelogin.com" type="url">
+          <label for="nc-clientId">${clientId}</label>
+          <input id="nc-clientId" name="clientId" placeholder="xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx" type="text">
+          <label for="nc-clientSecret">${clientSecret}</label>
+          <input id="nc-clientSecret" name="clientSecret" placeholder="p8e-…" type="password">
+          <label for="nc-orgId">${orgId}</label>
+          <input id="nc-orgId" name="orgId" placeholder="XXXXXXXXXXXXXXXX@AdobeOrg" type="text">
+          <label for="nc-techAccountId">${technicalAccountId}</label>
+          <input id="nc-techAccountId" name="technicalAccountId" placeholder="XXXXXXXXXXXXXXXX@techacct.adobe.com" type="text">
+          <label for="nc-scope">${scope}</label>
+          <input id="nc-scope" name="scope" value="openid,AdobeID,read_organizations,additional_info.projectedProductContext,session" type="text">
+        </div>
+      </fieldset>
 
-      <script type="text/javascript">
-        UIsocket = io();
-        UIsocket.on('connectionsList', connectionsList )
-                .on('connectionDetails', displayConnectionDetails);
+      <input type="submit" value="${add}">
+    </form>
+  </template>
 
-      var fieldLabels = {
-        name : "${name}",
-        label : "${label}",
-        desc : "${description}",
-        user : "${user}",
-        server : "${server}",
-        password : "${password}",
-        devMode : "${devMode}"
+  <script>
+    /* ══ i18n ═══════════════════════════════════════════════════════════════ */
+    const labels = {
+      name               : "${name}",
+      label              : "${label}",
+      desc               : "${description}",
+      server             : "${server}",
+      authType           : "${authType}",
+      user               : "${user}",
+      password           : "${password}",
+      imsEndpoint        : "${imsEndpoint}",
+      clientId           : "${clientId}",
+      clientSecret       : "${clientSecret}",
+      orgId              : "${orgId}",
+      technicalAccountId : "${technicalAccountId}",
+      scope              : "${scope}",
+      devMode            : "${devMode}"
+    };
+
+    const authTypeLabels = {
+      password : "${authType_password}",
+      ims      : "${authType_ims}"
+    };
+
+    /* ══ Socket.IO ══════════════════════════════════════════════════════════ */
+    const socket = io();
+    socket.on('connectionsList', renderConnectionsList);
+    socket.on('connectionDetails', renderConnectionDetails);
+    socket.emit('listConnections');
+
+    /* ══ Connection list ════════════════════════════════════════════════════ */
+    function renderConnectionsList(names) {
+      const ul = document.getElementById('connectionsList');
+      ul.innerHTML = '';
+      names.forEach(name => {
+        const li = document.createElement('li');
+        li.textContent = name;
+        li.dataset.name = name;
+        li.addEventListener('click', () => socket.emit('getConnectionDetails', name));
+        ul.appendChild(li);
+      });
+    }
+
+    /* ══ Connection details ══════════════════════════════════════════════════ */
+    function renderConnectionDetails(data) {
+      const panel = document.getElementById('connectionDetails');
+      panel.innerHTML = '';
+
+      const isIMS = data.authType === 'ims';
+
+      const title = document.createElement('h2');
+      title.className = 'form-title';
+      title.innerHTML = (data.label || data.name)
+        + (isIMS
+          ? '<span class="badge-v8">ACC v8 · IMS</span>'
+          : '<span class="badge-v7">ACC v7</span>');
+      panel.appendChild(title);
+
+      const form = document.createElement('form');
+      form.dataset.name = data.name;
+
+      /* Common fields */
+      appendField(form, 'server', data.server, 'url');
+      appendField(form, 'label',  data.label  || '', 'text');
+      appendField(form, 'desc',   data.desc   || '', 'text');
+
+      /* Auth type selector (read-only in edit mode to prevent accidental switching) */
+      const authSection = document.createElement('fieldset');
+      authSection.className = 'form-section';
+      const authLegend = document.createElement('legend');
+      authLegend.textContent = labels.authType;
+      authSection.appendChild(authLegend);
+
+      const authLabel = document.createElement('label');
+      authLabel.textContent = labels.authType;
+      authSection.appendChild(authLabel);
+
+      const authSel = document.createElement('select');
+      authSel.name = 'authType';
+      authSel.className = 'auth-type-select';
+      ['password', 'ims'].forEach(val => {
+        const opt = document.createElement('option');
+        opt.value = val;
+        opt.textContent = authTypeLabels[val];
+        if (val === (data.authType || 'password')) opt.selected = true;
+        authSel.appendChild(opt);
+      });
+      authSection.appendChild(authSel);
+
+      /* Password panel */
+      const pwPanel = document.createElement('div');
+      pwPanel.className = 'auth-panel' + (isIMS ? '' : ' active');
+      pwPanel.dataset.panel = 'password';
+      appendFieldTo(pwPanel, 'user',     data.user     || '', 'text');
+      appendFieldTo(pwPanel, 'password', data.password || '', 'password');
+      authSection.appendChild(pwPanel);
+
+      /* IMS panel */
+      const imsPanel = document.createElement('div');
+      imsPanel.className = 'auth-panel' + (isIMS ? ' active' : '');
+      imsPanel.dataset.panel = 'ims';
+      appendFieldTo(imsPanel, 'imsEndpoint',        data.imsEndpoint        || 'https://ims-na1.adobelogin.com', 'url');
+      appendFieldTo(imsPanel, 'clientId',           data.clientId           || '', 'text');
+      appendFieldTo(imsPanel, 'clientSecret',       data.clientSecret       || '', 'password');
+      appendFieldTo(imsPanel, 'orgId',              data.orgId              || '', 'text');
+      appendFieldTo(imsPanel, 'technicalAccountId', data.technicalAccountId || '', 'text');
+      appendFieldTo(imsPanel, 'scope',              data.scope              || 'openid,AdobeID,read_organizations,additional_info.projectedProductContext,session', 'text');
+      authSection.appendChild(imsPanel);
+
+      /* Basculement password ↔ IMS */
+      authSel.addEventListener('change', () => togglePanels(authSection, authSel.value));
+
+      form.appendChild(authSection);
+
+      /* Custom fields (unknown extras) */
+      const knownKeys = new Set([
+        'name','label','desc','server','authType',
+        'user','password',
+        'imsEndpoint','clientId','clientSecret','orgId','technicalAccountId','scope'
+      ]);
+      Object.keys(data).forEach(k => {
+        if (!knownKeys.has(k)) appendField(form, k, data[k], 'text');
+      });
+
+      const submit = document.createElement('input');
+      submit.type = 'submit';
+      submit.value = '${edit}';
+      form.appendChild(submit);
+
+      const addBtn = document.createElement('button');
+      addBtn.type = 'button';
+      addBtn.className = 'btn-secondary';
+      addBtn.textContent = '${addField}';
+      addBtn.addEventListener('click', () => addCustomField(form));
+
+      panel.appendChild(form);
+      panel.appendChild(addBtn);
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        const payload = collectFormData(form);
+        socket.emit('setConnectionDetails', form.dataset.name, payload);
+      });
+    }
+
+    /* ══ New connection ══════════════════════════════════════════════════════ */
+    document.getElementById('addConnectionLink').addEventListener('click', e => {
+      e.preventDefault();
+      const panel = document.getElementById('connectionDetails');
+      panel.innerHTML = '';
+
+      const tpl = document.getElementById('tpl-new-connection');
+      panel.appendChild(tpl.content.cloneNode(true));
+
+      const form = panel.querySelector('#newConnectionForm');
+      const authSel = form.querySelector('[name=authType]');
+      authSel.addEventListener('change', () => togglePanels(form, authSel.value));
+
+      form.addEventListener('submit', e => {
+        e.preventDefault();
+        const payload = collectFormData(form);
+        const name = payload.name;
+        delete payload.name;
+        // Clean up empty fields from the inactive auth panel
+        cleanUnusedAuthFields(payload);
+        socket.emit('addConnection', name, payload);
+      });
+    });
+
+    /* ══ Helpers ════════════════════════════════════════════════════════════ */
+
+    /** Creates a label + input and appends it to the parent. */
+    function appendFieldTo(parent, key, value, type) {
+      const lbl = document.createElement('label');
+      lbl.textContent = labels[key] || key;
+      parent.appendChild(lbl);
+      const input = document.createElement('input');
+      input.type  = type || 'text';
+      input.name  = key;
+      input.value = value;
+      parent.appendChild(input);
+    }
+
+    function appendField(form, key, value, type) {
+      appendFieldTo(form, key, value, type);
+    }
+
+    function addCustomField(form) {
+      const wrapper = document.createElement('div');
+      const nameInput = document.createElement('input');
+      nameInput.type = 'text'; nameInput.placeholder = '${fieldNamePlaceholder}';
+      const valInput = document.createElement('input');
+      valInput.type = 'text'; valInput.placeholder = '${fieldValuePlaceholder}';
+      nameInput.addEventListener('input', () => { valInput.name = nameInput.value; });
+      wrapper.appendChild(nameInput);
+      wrapper.appendChild(valInput);
+      form.querySelector('input[type=submit]').before(wrapper);
+    }
+
+    /** Toggles auth panels based on the selected type. */
+    function togglePanels(container, activeType) {
+      container.querySelectorAll('.auth-panel').forEach(panel => {
+        panel.classList.toggle('active', panel.dataset.panel === activeType);
+      });
+    }
+
+    /** Collects form data into a key/value object. */
+    function collectFormData(form) {
+      const data = {};
+      new FormData(form).forEach((value, key) => {
+        if (key) data[key] = value;
+      });
+      return data;
+    }
+
+    /** Removes fields from the inactive auth panel before submit. */
+    function cleanUnusedAuthFields(payload) {
+      const authType = payload.authType || 'password';
+      const passwordOnlyKeys = ['user', 'password'];
+      const imsOnlyKeys = ['imsEndpoint', 'clientId', 'clientSecret', 'orgId', 'technicalAccountId', 'scope'];
+
+      if (authType === 'ims') {
+        passwordOnlyKeys.forEach(k => { if (!payload[k]) delete payload[k]; });
+      } else {
+        imsOnlyKeys.forEach(k => { if (!payload[k]) delete payload[k]; });
       }
-
-        function connectionsList( data ){        
-          $('#connectionsList').empty();
-          data.forEach( (connection) => {
-            var liConnection = $("<li data-name='" + connection + "'>" + connection + "</li>");
-            
-            $('#connectionsList').append(liConnection);
-            liConnection.on('click',getConnectionDetails)
-          })          
-        }
-
-        function getConnectionDetails(event){
-          if( UIsocket.waitingDetails )
-            return;
-          //console.log("getConnectionDetails : " , event);
-
-          UIsocket.emit('getConnectionDetails', $(event.target).data('name'));
-          event.preventDefault();
-          event.stopPropagation();
-          UIsocket.waitingDetails = true;
-        }
-
-        function displayConnectionDetails( data ){
-          //console.log("displayConnectionDetails" , data)
-          UIsocket.waitingDetails = false;
-          $('#connectionDetails').empty()
-                                .append('<h1>' + ( data.label ? data.label : data.name) + '</h1>')
-                                .append('<form data-name="'+ data.name +'"/>');
-          for(var k in data )
-            if( ['name','password'].indexOf( k ) == -1 )
-              $('#connectionDetails form').append('<label for="'+k+'">' +( fieldLabels[k] || k ) + '</label><input name="'+k+'" value="' + data[k] + '" type="text"/><br/>');
-
-             $('#connectionDetails form').append('<label for="password">Mot de passe</label><input name="password" value="' + data['password'] + '" type="password"/><br/>');
-
-            $('#connectionDetails form').append('<input type="submit" value="Modifier" class="submitBtn"/>');
-            $('#connectionDetails form').on('submit', setConnectionDetails);
-
-            var addFieldButton = $('<input type="button" value="${addField}"/>');
-            addFieldButton.on('click', addDetailsField );
-            $('#connectionDetails').append(addFieldButton)
-
-        }
-        var nbDetailsField = 0;
-        function addDetailsField(){
-          var newInputName = $('<input id="newFieldName'+nbDetailsField+'" value="" placeholder="nom JS du nouveau champs" type="text"/>');
-          var newInputValue = $('<input id="newField'+nbDetailsField+'" value="" name="" placeholder="valeur du nouveau champs" type="text"/>');
-
-          newInputName.on('change', () => {newInputValue.attr("name", newInputName.val() ); } );
-          //$('#connectionDetails form .submitBtn').before('<br/>')
-          $('#connectionDetails form .submitBtn').before($('<label>Nouveau champs</label>'))
-          $('#connectionDetails form .submitBtn').before(newInputName)
-          $('#connectionDetails form .submitBtn').before(newInputValue);
-          $('#connectionDetails form .submitBtn').before('<br/>')
-          nbDetailsField++;
-          //<label>Champs : </label><input name="__newFieldLabel" value=""/><br/><label>Valeur : </label><input name="__newFieldValue" value=""/>')
-        }
-
-        function setConnectionDetails(event){
-          if( UIsocket.waitingDetails )
-            return;
-          //console.log("getConnectionDetails : " , event);
-
-          var datas = {};
-          $('#connectionDetails form').serializeArray().forEach( ( obj )=>{
-            datas[ obj.name ] = obj.value;
-          });
-          UIsocket.emit('setConnectionDetails', $('#connectionDetails form').data('name'),datas );
-          event.preventDefault();
-          event.stopPropagation();
-          UIsocket.waitingDetails = true;
-        }
-
-        function addNewConnection(){
-          $('#connectionDetails').empty()
-                                .append('<h1>Nouvelle connection</h1>')
-                                .append( '<form>' + $('form#newConnection').html() + '</form>');
-          $('#connectionDetails form').on('submit', sendNewConnection);
-        }
-        $('#addConnectionLink').on('click', addNewConnection);
-
-        function sendNewConnection( event ){ 
-          if( UIsocket.waitingDetails )
-            return;
-          console.log("getConnectionDetails : " , event);
-
-          var datas = {};
-          $('#connectionDetails form').serializeArray().forEach( ( obj )=>{
-            datas[ obj.name ] = obj.value;
-          });
-          var name = datas['name'].toString();
-          delete datas['name'];
-          UIsocket.emit('addConnection', name, datas );
-          event.preventDefault();
-          event.stopPropagation();
-          UIsocket.waitingDetails = true;
-
-        }
-
-        UIsocket.emit('listConnections');
-      </script>
-  </body>
+    }
+  </script>
+</body>
 </html>
